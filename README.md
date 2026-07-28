@@ -25,3 +25,5 @@ SSH and rsync.
 ├── deploy.sh
 └── README.md
 ```
+
+https://roadmap.sh/projects/static-site-server
