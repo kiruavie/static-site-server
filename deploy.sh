@@ -5,7 +5,7 @@ set -Eeuo pipefail
 REMOTE="prod_vps"
 REMOTE_PATH="/var/www/static-site"
 LOCAL_PATH="./site/"
-SITE_URL="http://69.10.35.135"
+SITE_URL="${MYIP}"
 
 echo "Vérification du dossier local..."
 
