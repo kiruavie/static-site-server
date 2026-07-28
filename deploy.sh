@@ -2,10 +2,33 @@
 
 set -Eeuo pipefail
 
-REMOTE="prod_vps"
-REMOTE_PATH="/var/www/static-site"
-LOCAL_PATH="./site/"
-SITE_URL="${MYIP}"
+ENV_FILE=".env"
+
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "Erreur : le fichier $ENV_FILE est introuvable."
+    echo "Crée-le à partir du fichier .env.example."
+    exit 1
+fi
+
+# Charge les variables du fichier .env.
+set -a
+source "$ENV_FILE"
+set +a
+
+# Vérifie que les variables obligatoires existent.
+required_variables=(
+    REMOTE
+    REMOTE_PATH
+    LOCAL_PATH
+    SITE_URL
+)
+
+for variable in "${required_variables[@]}"; do
+    if [[ -z "${!variable:-}" ]]; then
+        echo "Erreur : la variable $variable n'est pas définie dans $ENV_FILE."
+        exit 1
+    fi
+done
 
 echo "Vérification du dossier local..."
 
@@ -21,7 +44,7 @@ if ! ssh \
     -o ConnectTimeout=10 \
     "$REMOTE" \
     "exit"; then
-    echo "Erreur : connexion SSH impossible."
+    echo "Erreur : connexion SSH impossible vers $REMOTE."
     exit 1
 fi
 
