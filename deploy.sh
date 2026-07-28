@@ -2,10 +2,10 @@
 
 set -Eeuo pipefail
 
-REMOTE_USER="harlem_dev"
-REMOTE_HOST="prod_vps"
+REMOTE="prod_vps"
 REMOTE_PATH="/var/www/static-site"
 LOCAL_PATH="./site/"
+SITE_URL="http://69.10.35.135"
 
 echo "Vérification du dossier local..."
 
@@ -19,7 +19,7 @@ echo "Vérification de la connexion SSH..."
 if ! ssh \
     -o BatchMode=yes \
     -o ConnectTimeout=10 \
-    "${REMOTE_USER}@${REMOTE_HOST}" \
+    "$REMOTE" \
     "exit"; then
     echo "Erreur : connexion SSH impossible."
     exit 1
@@ -35,7 +35,7 @@ rsync \
     --human-readable \
     --exclude=".git/" \
     "$LOCAL_PATH" \
-    "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}/"
+    "${REMOTE}:${REMOTE_PATH}/"
 
 echo "Vérification du site distant..."
 
@@ -43,10 +43,10 @@ if curl \
     --fail \
     --silent \
     --show-error \
-    "http://${REMOTE_HOST}" \
+    "$SITE_URL" \
     > /dev/null; then
     echo "Déploiement terminé avec succès."
-    echo "Site : http://${REMOTE_HOST}"
+    echo "Site : $SITE_URL"
 else
     echo "Les fichiers ont été transférés, mais le site ne répond pas."
     exit 1
